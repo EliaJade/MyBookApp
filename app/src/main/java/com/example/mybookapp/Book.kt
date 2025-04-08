@@ -69,7 +69,7 @@ data class Book (
         val maturityRating: String, //possible boolean
         val allowAnonLogging: Boolean,
         val contentVersion: String,
-        val imageLinks: String? = null,
+        val imageLinks: ImageLinks,
         val language: String,
         val previewLink: String,
         val infoLink: String,
@@ -77,6 +77,12 @@ data class Book (
     ){
 
     }
+        data class ImageLinks(
+            val smallThumbnail: String,
+            val thumbnail: String
+        ){
+        }
+
         data class IndustryIdentifiers (
             val type: String,
             val identifier: Int,
