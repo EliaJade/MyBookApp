@@ -1,5 +1,7 @@
 package com.example.mybookapp
 
+import android.provider.MediaStore.Video.Thumbnails
+
 data class BookKind(
     val kind: String,
     val items: List<Book>
@@ -58,13 +60,13 @@ data class Book (
         val title: String,
         val subtitle: String? = null,
         val description: String,
-        val authors: String,
+        val authors: List<String>,
         val publisher: String,
         val publishedDate: String,
-        val industryIdentifiers: IndustryIdentifiers,
+        val industryIdentifiers: List<IndustryIdentifiers>,
         val readingModes: ReadingModes,
         val pageCount: Int? = null,
-        val categories: String? = null,
+        val categories: List<String>?,
         val printType: String,
         val maturityRating: String, //possible boolean
         val allowAnonLogging: Boolean,
@@ -79,13 +81,13 @@ data class Book (
     }
         data class ImageLinks(
             val smallThumbnail: String,
-            val thumbnail: String
+            val thumbnail: String?
         ){
         }
 
         data class IndustryIdentifiers (
             val type: String,
-            val identifier: Int,
+            val identifier: String,
 
         ){
 

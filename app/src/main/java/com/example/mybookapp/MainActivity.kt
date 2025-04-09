@@ -35,9 +35,10 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val result = service.findBookByTitle("red")
+                val result = service.findBookByTitle("flower")
                 Log.i("API", result.toString())
             } catch (e: Exception) {
+                Log.i("error en el coroutine", "Error ${e.message}")
                 e.printStackTrace()
             }
         }
