@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var adapter: BookAdapter
     lateinit var binding: ActivityMainBinding
 
-    var bookList: List<Book> = listOf()
+    lateinit var bookList: List<Book>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +28,16 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        adapter = BookAdapter(emptyList()) {
+
         }
 
         binding.recyclerView.adapter = adapter
@@ -52,7 +57,15 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val result = service.findBookByTitle("flower")
+                bookList = result.items
+
                 Log.i("API", result.toString())
+
+                CoroutineScope(Dispatchers.Main).launch {
+                    adapter.items = bookList
+                    adapter.notifyDataSetChanged()
+                }
+
             } catch (e: Exception) {
                 Log.i("error en el coroutine", "Error ${e.message}")
                 e.printStackTrace()

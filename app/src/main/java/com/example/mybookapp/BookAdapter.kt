@@ -35,7 +35,8 @@ class BookViewHolder (val binding: ItemBookBinding) : ViewHolder(binding.root){
 
     fun render(volumeInfo: VolumeInfo) {
         binding.titleTextView.text = volumeInfo.title
-        Picasso.get().load(volumeInfo.imageLinks.thumbnail).into(binding.pictureImageView)
+
+        Picasso.get().load(volumeInfo.imageLinks.thumbnail?.replace("http://", "https://")).into(binding.pictureImageView)
     }
 
 }
