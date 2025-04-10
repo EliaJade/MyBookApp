@@ -39,7 +39,9 @@
             android:layout_height="wrap_content"
             tools:text= "Name of Book"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+        android:ellipsize="end"
+        android:maxLines="2" />
 
     <TextView
         android:id="@+id/authorTextView"

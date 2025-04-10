@@ -1,6 +1,4 @@
-package com.example.mybookapp
-
-import android.provider.MediaStore.Video.Thumbnails
+package com.example.mybookapp.data
 
 data class BookKind(
     val kind: String,
@@ -60,7 +58,7 @@ data class Book (
         val title: String,
         val subtitle: String? = null,
         val description: String,
-        val authors: List<String>,
+        val authors: List<String>?,
         val publisher: String,
         val publishedDate: String,
         val industryIdentifiers: List<IndustryIdentifiers>,
@@ -77,7 +75,9 @@ data class Book (
         val infoLink: String,
         val canonicalVolumeLink: String,
     ){
-
+        fun getAuthorsText(): String {
+            return authors?.joinToString() ?: "Anonymous"
+        }
     }
         data class ImageLinks(
             val smallThumbnail: String,
@@ -98,3 +98,11 @@ data class Book (
         ){
 
         }
+
+/*companion object {
+    const val COLUMN_NAME_ID = "id"
+    const val COLUMN_NAME_TITLE = "title"
+    const val COLUMN_NAME_AUTHOR = "author"
+
+    const val COLUMN_NAME = "Read"
+}*/

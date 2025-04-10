@@ -1,9 +1,11 @@
-package com.example.mybookapp
+package com.example.mybookapp.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.example.mybookapp.data.Book
+import com.example.mybookapp.data.VolumeInfo
 import com.example.mybookapp.databinding.ItemBookBinding
 import com.squareup.picasso.Picasso
 
@@ -35,7 +37,8 @@ class BookViewHolder (val binding: ItemBookBinding) : ViewHolder(binding.root){
 
     fun render(volumeInfo: VolumeInfo) {
         binding.titleTextView.text = volumeInfo.title
-        Picasso.get().load(volumeInfo.imageLinks.thumbnail).into(binding.pictureImageView)
+        binding.authorTextView.text = volumeInfo.getAuthorsText()
+        Picasso.get().load(volumeInfo.imageLinks.thumbnail?.replace("http://", "https://")).into(binding.pictureImageView)
     }
 
 }
