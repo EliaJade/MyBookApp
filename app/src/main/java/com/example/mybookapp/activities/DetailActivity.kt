@@ -2,6 +2,8 @@ package com.example.mybookapp.activities
 
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -11,9 +13,12 @@ import com.example.mybookapp.data.Book
 import com.example.mybookapp.data.BookService
 import com.example.mybookapp.databinding.ActivityDetailBinding
 import com.example.mybookapp.databinding.ActivityMainBinding
+import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -42,6 +47,8 @@ class DetailActivity : AppCompatActivity(){
 
         val id = intent.getStringExtra("BOOK_ID")
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         getBookById(id!!)
 
     }
@@ -49,20 +56,33 @@ class DetailActivity : AppCompatActivity(){
     fun loadData() {
         binding.nameTextView.text = book.volumeInfo.title
         binding.authorTextView.text = book.volumeInfo.getAuthorsText()
+        Picasso.get().load(book.volumeInfo.imageLinks.thumbnail?.replace("http://", "https://")).into(binding.coverImageView)
+        binding.bookDescriptionTextView.text = book.volumeInfo.description ?: "No description"
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     fun getBookById(id: String) {
+        binding.progress.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
             try {
-
                 val service = BookService.getInstance()
                 book = service.findBookById(id)
 
 
                 CoroutineScope(Dispatchers.Main).launch {
                     loadData()
+                    binding.progress.visibility = View.GONE
                 }
-
             } catch (e: Exception) {
                 e.printStackTrace()
             }
