@@ -99,10 +99,4 @@ data class Book (
 
         }
 
-/*companion object {
-    const val COLUMN_NAME_ID = "id"
-    const val COLUMN_NAME_TITLE = "title"
-    const val COLUMN_NAME_AUTHOR = "author"
 
-    const val COLUMN_NAME = "Read"
-}*/

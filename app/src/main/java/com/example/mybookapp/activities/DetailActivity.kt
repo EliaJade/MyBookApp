@@ -1,5 +1,6 @@
 package com.example.mybookapp.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -11,6 +12,9 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.mybookapp.R
 import com.example.mybookapp.data.Book
 import com.example.mybookapp.data.BookService
+import com.example.mybookapp.data.MyBooks
+import com.example.mybookapp.data.MyBooksDAO
+import com.example.mybookapp.data.Status
 import com.example.mybookapp.databinding.ActivityDetailBinding
 import com.example.mybookapp.databinding.ActivityMainBinding
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -32,6 +36,9 @@ class DetailActivity : AppCompatActivity(){
 
     lateinit var book: Book
 
+    var myBooks: MyBooks? = null
+    lateinit var myBooksDAO: MyBooksDAO
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,7 +52,35 @@ class DetailActivity : AppCompatActivity(){
             insets
         }
 
-        val id = intent.getStringExtra("BOOK_ID")
+        myBooksDAO = MyBooksDAO(this)
+
+        val id = intent.getStringExtra("BOOK_ID")!!
+
+        myBooks = myBooksDAO.findById(id)
+
+
+        // Esto es lo que haría el botón borrar
+        if (myBooks != null) {
+            myBooksDAO.delete(myBooks!!)
+            myBooks = null
+        }
+
+        // meter en funcion de onclicklistener (button)
+        if (myBooks == null) {
+            // No esta guardado
+            // insert
+            myBooks = MyBooks(id, Status.READ)
+            myBooksDAO.insert(myBooks!!)
+        } else {
+            // Esta guardado con status myBooks.status
+            // update
+            myBooks!!.status = Status.READ
+            myBooksDAO.update(myBooks!!)
+        }
+
+        // other 3 buttons are going to do an update or a insert
+
+
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -66,6 +101,14 @@ class DetailActivity : AppCompatActivity(){
             android.R.id.home -> {
                 finish()
                 true
+            }
+
+            R.id.action_save -> {
+                val saveIntent = Intent()
+                val savedIntent = Intent.createChooser(saveIntent, null)
+                startActivity(savedIntent)
+                true
+
             }
             else -> super.onOptionsItemSelected(item)
         }
