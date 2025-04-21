@@ -13,7 +13,10 @@ class DatabaseManager(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         private const val SQL_CREATE_MYBOOK_MYBOOKS =
             "CREATE TABLE ${MyBooks.TABLE_NAME} (" +
                     "${MyBooks.COLUMN_BOOK_ID} TEXT PRIMARY KEY," +
-                    "${MyBooks.COLUMN_BOOK_STATUS} INTEGER)"
+                    "${MyBooks.COLUMN_BOOK_STATUS} INTEGER," +
+                    "${MyBooks.COLUMN_BOOK_TITLE} INTEGER," +
+                    "${MyBooks.COLUMN_BOOK_AUTHOR} INTEGER," +
+                    "${MyBooks.COLUMN_BOOK_THUMBNAIL} INTEGER)"
 
         private const val SQL_DROP_MYBOOK_MYBOOKS = "DROP TABLE IF EXISTS ${MyBooks.TABLE_NAME}"
 }

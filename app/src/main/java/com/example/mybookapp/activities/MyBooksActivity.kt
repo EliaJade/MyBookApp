@@ -46,13 +46,13 @@ class MyBooksActivity : AppCompatActivity() {
         myBooksDAO = MyBooksDAO(this)
 
         binding.readTextView.setOnClickListener {
-            myBooks.id = id
+            //myBooks.id = id
 
-            if (myBooks.id != -1L) {
+            /*if (myBooks.id!= -1L) {
                 myBooksDAO.update(myBooks)
             } else {
                 myBooksDAO.insert(myBooks)
-            }
+            }*/
 
             finish()
         }

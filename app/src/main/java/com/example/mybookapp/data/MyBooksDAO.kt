@@ -15,6 +15,9 @@ class MyBooksDAO(context: Context) {
         val values = ContentValues().apply {
             put(MyBooks.COLUMN_BOOK_STATUS, myBooks.status.ordinal)
             put(MyBooks.COLUMN_BOOK_ID, myBooks.id)
+            put(MyBooks.COLUMN_BOOK_TITLE, myBooks.title)
+            put(MyBooks.COLUMN_BOOK_AUTHOR, myBooks.author)
+            put(MyBooks.COLUMN_BOOK_THUMBNAIL, myBooks.thumbnail)
         }
 
         try {
@@ -33,6 +36,9 @@ class MyBooksDAO(context: Context) {
         val values = ContentValues().apply {
             put(MyBooks.COLUMN_BOOK_STATUS, myBooks.status.ordinal)
             put(MyBooks.COLUMN_BOOK_ID, myBooks.id)
+            put(MyBooks.COLUMN_BOOK_TITLE, myBooks.title)
+            put(MyBooks.COLUMN_BOOK_AUTHOR, myBooks.author)
+            put(MyBooks.COLUMN_BOOK_THUMBNAIL, myBooks.thumbnail)
         }
         try {
             val updatedRows  = db.update(MyBooks.TABLE_NAME, values, "${MyBooks.COLUMN_BOOK_ID} = ${myBooks.id}", null)
@@ -61,7 +67,10 @@ class MyBooksDAO(context: Context) {
         val db = databaseManager.readableDatabase
         val projection = arrayOf(
             MyBooks.COLUMN_BOOK_ID,
-            MyBooks.COLUMN_BOOK_STATUS
+            MyBooks.COLUMN_BOOK_STATUS,
+            MyBooks.COLUMN_BOOK_TITLE,
+            MyBooks.COLUMN_BOOK_AUTHOR,
+            MyBooks.COLUMN_BOOK_THUMBNAIL
         )
 
         val selection = "${MyBooks.COLUMN_BOOK_ID} = $id"
@@ -82,11 +91,13 @@ class MyBooksDAO(context: Context) {
 
             if (cursor.moveToNext()) {
                 val itemId = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_ID))
-                val status =
-                    cursor.getInt(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_STATUS))
+                val status = cursor.getInt(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_STATUS))
+                val title = cursor.getInt(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_TITLE))
+                val author = cursor.List<String>(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_AUTHOR))
+                val thumbnail = cursor.getInt(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_THUMBNAIL))
 
 
-                book = MyBooks(itemId, Status.entries[status])
+                book = MyBooks(itemId, Status.entries[status], title.toString(), author, thumbnail.toString())
             }
 
         } catch (e: Exception) {
@@ -103,6 +114,9 @@ class MyBooksDAO(context: Context) {
         val projection = arrayOf(
             MyBooks.COLUMN_BOOK_ID,
             MyBooks.COLUMN_BOOK_STATUS,
+            MyBooks.COLUMN_BOOK_TITLE,
+            MyBooks.COLUMN_BOOK_AUTHOR,
+            MyBooks.COLUMN_BOOK_THUMBNAIL,
         )
 
         val bookList: MutableList<MyBooks> = mutableListOf()
@@ -122,8 +136,12 @@ class MyBooksDAO(context: Context) {
             while (cursor.moveToNext()) {
                 val itemId = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_ID))
                 val status = cursor.getInt(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_STATUS))
+                val title = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_TITLE))
+                val author = cursor.getList<String>(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_AUTHOR))
+                val thumbnail = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_THUMBNAIL))
 
-                val book = MyBooks(itemId, Status.entries[status])
+
+                val book = MyBooks(itemId, Status.entries[status], title, author, thumbnail)
                 bookList.add(book)
             }
         } catch (e: Exception) {
