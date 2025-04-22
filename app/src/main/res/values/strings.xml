@@ -3,4 +3,7 @@
 
     <string name="menu_search">Search</string>
 
+    <string name="status_read">Read</string>
+    <string name="status_reading">Reading</string>
+    <string name="status_want_to_read">Want to read</string>
 </resources>

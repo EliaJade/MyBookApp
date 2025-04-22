@@ -1,13 +1,14 @@
 package com.example.mybookapp.activities
 
-import android.content.Intent
-import android.icu.text.CaseMap.Title
+import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ListAdapter
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -18,16 +19,12 @@ import com.example.mybookapp.data.MyBooks
 import com.example.mybookapp.data.MyBooksDAO
 import com.example.mybookapp.data.Status
 import com.example.mybookapp.databinding.ActivityDetailBinding
-import com.example.mybookapp.databinding.ActivityMainBinding
 import com.example.mybookapp.utils.DatabaseManager
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+
 
 class DetailActivity : AppCompatActivity(){
 
@@ -42,7 +39,7 @@ class DetailActivity : AppCompatActivity(){
     var myBooks: MyBooks? = null
     lateinit var myBooksDAO: MyBooksDAO
 
-    var isSaved = false
+    //var isSaved = false
     var saveMenu: MenuItem? = null
     lateinit var databaseManager: DatabaseManager
 
@@ -65,34 +62,14 @@ class DetailActivity : AppCompatActivity(){
 
         myBooks = myBooksDAO.findById(id)
 
-
-        // Esto es lo que haría el botón borrar
-        if (myBooks != null) {
-            myBooksDAO.delete(myBooks!!)
-            myBooks = null
-        }
-
-        // meter en funcion de onclicklistener (button)
-        if (myBooks == null) {
-            // No esta guardado
-            // insert
-            myBooks = MyBooks(id, Status.READ)
-            myBooksDAO.insert(myBooks!!)
-        } else {
-            // Esta guardado con status myBooks.status
-            // update
-            myBooks!!.status = Status.READ
-            myBooksDAO.update(myBooks!!)
-        }
-
-        // other 3 buttons are going to do an update or a insert
-
-
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
         getBookById(id!!)
 
+        binding.statusChip.setOnClickListener {
+            showStatusAlertDialog()
+        }
     }
 
     fun loadData() {
@@ -100,6 +77,10 @@ class DetailActivity : AppCompatActivity(){
         binding.authorTextView.text = book.volumeInfo.getAuthorsText()
         Picasso.get().load(book.volumeInfo.imageLinks.thumbnail?.replace("http://", "https://")).into(binding.coverImageView)
         binding.bookDescriptionTextView.text = book.volumeInfo.description ?: "No description"
+
+        loadStatus()
+        supportActionBar?.title = book.volumeInfo.title
+        supportActionBar?.subtitle = book.volumeInfo.getAuthorsText()
     }
 
 
@@ -123,39 +104,44 @@ class DetailActivity : AppCompatActivity(){
             }
 
             R.id.action_save -> {
-                isSaved = !isSaved
-                if (isSaved) {
-                    //databaseManager.onUpgrade(MyBooks.COLUMN_BOOK_STATUS)
-                    //myBooksDAO.update(MyBooks.COLUMN_BOOK_STATUS)
-
+                if (myBooks != null) {
+                    myBooksDAO.delete(myBooks!!)
+                    myBooks = null
+                    loadStatus()
                 } else {
-                    //databaseManager.onCreate(MyBooks.COLUMN_BOOK_STATUS)
-                    // myBooksDAO.insert(MyBooks.COLUMN_BOOK_STATUS)
-
+                    showStatusAlertDialog()
                 }
                 setSavedIcon()
-                //println("Menu favorite")
                 true
+            }
 
-            /*R.id.action_save -> {
-                val saveIntent = Intent()
-                val savedIntent = Intent.createChooser(saveIntent, null)
-                startActivity(savedIntent)
-                true
-
-            }*/
             else -> super.onOptionsItemSelected(item)
         }
+
     }
-    }
+
 
 
     private fun setSavedIcon() {
-        if (isSaved) {
+        if (myBooks != null) {
             saveMenu?.setIcon(R.drawable.ic_save)
-
         } else {
             saveMenu?.setIcon(R.drawable.unselected_bookmark_ic)
+        }
+    }
+
+    private fun loadStatus() {
+        if (myBooks != null) {
+            val iconId = when(myBooks!!.status) {
+                Status.READ -> R.drawable.ic_status_read
+                Status.READING -> R.drawable.ic_status_reading
+                Status.WANT_TO_READ -> R.drawable.ic_status_want_to_read
+            }
+            binding.statusChip.setChipIconResource(iconId)
+            binding.statusChip.text = getString(myBooks!!.status.title)
+            binding.statusChip.visibility = View.VISIBLE
+        } else {
+            binding.statusChip.visibility = View.GONE
         }
     }
 
@@ -175,5 +161,37 @@ class DetailActivity : AppCompatActivity(){
                 e.printStackTrace()
             }
         }
+    }
+
+
+
+    fun showStatusAlertDialog() {
+        val statusList = Status.entries.map { getString(it.title) }.toTypedArray()
+        var status: Status = Status.WANT_TO_READ
+        val checkedIndex = myBooks?.status?.ordinal ?: -1
+
+        val alert = AlertDialog.Builder(this)
+        alert.setTitle("Select a status")
+        alert.setSingleChoiceItems(statusList, checkedIndex) { dialog, which ->
+            status = Status.entries[which]
+        }
+        alert.setPositiveButton("OK") { dialog, which ->
+            if (myBooks != null) {
+                myBooks!!.status = status
+                myBooksDAO.update(myBooks!!)
+            } else {
+                myBooks = MyBooks(
+                    book.id,
+                    status,
+                    book.volumeInfo.title,
+                    book.volumeInfo.authors,
+                    book.volumeInfo.imageLinks.thumbnail
+                )
+                myBooksDAO.insert(myBooks!!)
+            }
+            setSavedIcon()
+            loadStatus()
+        }
+        alert.show()
     }
 }

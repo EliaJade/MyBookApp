@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        supportActionBar?.title = "My Library"
+        supportActionBar?.title = "Library"
 
         adapter = BookAdapter(emptyList()) { position ->
             navigateToDetail(bookList[position])
@@ -51,9 +52,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.recyclerView.adapter = adapter
 
-        binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
+        binding.recyclerView.layoutManager = GridLayoutManager(this, 1)
 
-        searchBookByName("flower")
+        searchBookByName("a")
 
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -76,6 +77,17 @@ class MainActivity : AppCompatActivity() {
         })
 
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_save -> {
+                val intent = Intent(this, MyBooksActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     fun searchBookByName(query: String) {

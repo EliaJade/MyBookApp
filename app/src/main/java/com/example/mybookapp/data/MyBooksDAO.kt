@@ -16,7 +16,7 @@ class MyBooksDAO(context: Context) {
             put(MyBooks.COLUMN_BOOK_STATUS, myBooks.status.ordinal)
             put(MyBooks.COLUMN_BOOK_ID, myBooks.id)
             put(MyBooks.COLUMN_BOOK_TITLE, myBooks.title)
-            put(MyBooks.COLUMN_BOOK_AUTHOR, myBooks.author)
+            put(MyBooks.COLUMN_BOOK_AUTHOR, myBooks.authors?.joinToString("; "))
             put(MyBooks.COLUMN_BOOK_THUMBNAIL, myBooks.thumbnail)
         }
 
@@ -37,7 +37,7 @@ class MyBooksDAO(context: Context) {
             put(MyBooks.COLUMN_BOOK_STATUS, myBooks.status.ordinal)
             put(MyBooks.COLUMN_BOOK_ID, myBooks.id)
             put(MyBooks.COLUMN_BOOK_TITLE, myBooks.title)
-            put(MyBooks.COLUMN_BOOK_AUTHOR, myBooks.author)
+            put(MyBooks.COLUMN_BOOK_AUTHOR, myBooks.authors?.joinToString("; "))
             put(MyBooks.COLUMN_BOOK_THUMBNAIL, myBooks.thumbnail)
         }
         try {
@@ -55,7 +55,7 @@ class MyBooksDAO(context: Context) {
         val db = databaseManager.writableDatabase
 
         try {
-            val deletedRows = db.delete(MyBooks.TABLE_NAME, "${MyBooks.COLUMN_BOOK_ID} = ${myBooks.id}", null)
+            val deletedRows = db.delete(MyBooks.TABLE_NAME, "${MyBooks.COLUMN_BOOK_ID} = '${myBooks.id}'", null)
             Log.i("DATABASE", "Deleted book with id: $deletedRows")
         } catch (e: Exception) {
             e.printStackTrace()
@@ -73,7 +73,7 @@ class MyBooksDAO(context: Context) {
             MyBooks.COLUMN_BOOK_THUMBNAIL
         )
 
-        val selection = "${MyBooks.COLUMN_BOOK_ID} = $id"
+        val selection = "${MyBooks.COLUMN_BOOK_ID} = '$id'"
 
         var book: MyBooks? = null
 
@@ -92,12 +92,12 @@ class MyBooksDAO(context: Context) {
             if (cursor.moveToNext()) {
                 val itemId = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_ID))
                 val status = cursor.getInt(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_STATUS))
-                val title = cursor.getInt(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_TITLE))
-                val author = cursor.List<String>(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_AUTHOR))
-                val thumbnail = cursor.getInt(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_THUMBNAIL))
+                val title = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_TITLE))
+                val author = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_AUTHOR))?.split("; ")
+                val thumbnail = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_THUMBNAIL))
 
 
-                book = MyBooks(itemId, Status.entries[status], title.toString(), author, thumbnail.toString())
+                book = MyBooks(itemId, Status.entries[status], title, author, thumbnail)
             }
 
         } catch (e: Exception) {
@@ -137,7 +137,7 @@ class MyBooksDAO(context: Context) {
                 val itemId = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_ID))
                 val status = cursor.getInt(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_STATUS))
                 val title = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_TITLE))
-                val author = cursor.getList<String>(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_AUTHOR))
+                val author = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_AUTHOR))?.split("; ")
                 val thumbnail = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_THUMBNAIL))
 
 

@@ -19,8 +19,8 @@
 
         <ImageView
             android:id="@+id/pictureImageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="120dp"
+            android:layout_height="170dp"
             android:src="@mipmap/ic_launcher"
             android:scaleType="centerCrop"/>
 

@@ -1,12 +1,18 @@
 package com.example.mybookapp.activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mybookapp.R
+import com.example.mybookapp.adapters.BookAdapter
+import com.example.mybookapp.adapters.MyBooksAdapter
+import com.example.mybookapp.data.Book
 import com.example.mybookapp.data.MyBooks
 import com.example.mybookapp.data.MyBooksDAO
 import com.example.mybookapp.data.Status
@@ -14,13 +20,11 @@ import com.example.mybookapp.databinding.ActivityMyBooksBinding
 
 class MyBooksActivity : AppCompatActivity() {
 
-    companion object {
-        const val MYBOOK_ID = "MYBOOK_ID"
-    }
-
     lateinit var binding: ActivityMyBooksBinding
     lateinit var myBooksDAO: MyBooksDAO
-    lateinit var myBooks: MyBooks
+    var myBooksList: List<MyBooks> = emptyList()
+
+    lateinit var adapter: MyBooksAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,26 +39,42 @@ class MyBooksActivity : AppCompatActivity() {
             insets
         }
 
-        /*val state = Status.entries.map { }.toMutableSet()
-
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, state)
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.statusSpinner.setAdapter(adapter)*/
-
-        val id = intent.getLongExtra(MYBOOK_ID, -1L)
+        supportActionBar?.title = "My Books"
 
         myBooksDAO = MyBooksDAO(this)
 
-        binding.readTextView.setOnClickListener {
-            //myBooks.id = id
-
-            /*if (myBooks.id!= -1L) {
-                myBooksDAO.update(myBooks)
-            } else {
-                myBooksDAO.insert(myBooks)
-            }*/
-
-            finish()
+        adapter = MyBooksAdapter(myBooksList) { position ->
+            navigateToDetail(myBooksList[position])
         }
+
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        myBooksList = myBooksDAO.findAll()
+        adapter.items = myBooksList
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
+    }
+
+    fun navigateToDetail(book: MyBooks) {
+        val intent = Intent(this, DetailActivity::class.java)
+        intent.putExtra(DetailActivity.EXTRA_BOOK_ID, book.id)
+        startActivity(intent)
     }
 }
