@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.mybookapp.R
@@ -75,8 +76,24 @@ class DetailActivity : AppCompatActivity(){
     fun loadData() {
         binding.nameTextView.text = book.volumeInfo.title
         binding.authorTextView.text = book.volumeInfo.getAuthorsText()
-        Picasso.get().load(book.volumeInfo.imageLinks.thumbnail?.replace("http://", "https://")).into(binding.coverImageView)
-        binding.bookDescriptionTextView.text = book.volumeInfo.description ?: "No description"
+        if (book.volumeInfo.imageLinks != null) {
+            Picasso.get()
+                .load(book.volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://"))
+                .into(binding.coverImageView)
+        } else {
+            binding.coverImageView.setImageResource(R.drawable.ic_launcher_background)
+        }
+        if(book.volumeInfo.description != null) {
+            binding.bookDescriptionTextView.text = HtmlCompat.fromHtml(book.volumeInfo.description!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        } else {
+            binding.bookDescriptionTextView.text = getString(R.string.no_description)
+        }
+
+        /*if(book.volumeInfo.authors != null) {
+            binding.authorTextView.text = HtmlCompat.fromHtml(book.volumeInfo.getAuthorsText()!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        } else {
+            binding.authorTextView.text = getString(R.string.anonymous)
+        }*/
 
         loadStatus()
         supportActionBar?.title = book.volumeInfo.title
@@ -171,11 +188,11 @@ class DetailActivity : AppCompatActivity(){
         val checkedIndex = myBooks?.status?.ordinal ?: -1
 
         val alert = AlertDialog.Builder(this)
-        alert.setTitle("Select a status")
+        alert.setTitle(R.string.select_a_status)
         alert.setSingleChoiceItems(statusList, checkedIndex) { dialog, which ->
             status = Status.entries[which]
         }
-        alert.setPositiveButton("OK") { dialog, which ->
+        alert.setPositiveButton(R.string.ok) { dialog, which ->
             if (myBooks != null) {
                 myBooks!!.status = status
                 myBooksDAO.update(myBooks!!)
@@ -185,7 +202,7 @@ class DetailActivity : AppCompatActivity(){
                     status,
                     book.volumeInfo.title,
                     book.volumeInfo.authors,
-                    book.volumeInfo.imageLinks.thumbnail
+                    book.volumeInfo.imageLinks?.thumbnail
                 )
                 myBooksDAO.insert(myBooks!!)
             }

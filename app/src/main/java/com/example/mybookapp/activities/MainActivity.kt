@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -15,6 +16,8 @@ import com.example.mybookapp.data.Book
 import com.example.mybookapp.adapters.BookAdapter
 import com.example.mybookapp.data.BookService
 import com.example.mybookapp.R
+import com.example.mybookapp.data.MyBooks
+import com.example.mybookapp.data.Status
 import com.example.mybookapp.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +32,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var bookList: List<Book>
 
+    lateinit var myBooks: MyBooks
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        supportActionBar?.title = "Library"
+        supportActionBar?.title = getString(R.string.library)
 
         adapter = BookAdapter(emptyList()) { position ->
             navigateToDetail(bookList[position])
@@ -54,9 +59,15 @@ class MainActivity : AppCompatActivity() {
 
         binding.recyclerView.layoutManager = GridLayoutManager(this, 1)
 
-        searchBookByName("mistborn")
+        searchBookByName("flower")
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        adapter.notifyDataSetChanged()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_activity_search, menu)
 
@@ -89,8 +100,6 @@ class MainActivity : AppCompatActivity() {
             else -> return super.onOptionsItemSelected(item)
         }
     }
-
-
 
     fun searchBookByName(query: String) {
         CoroutineScope(Dispatchers.IO).launch {

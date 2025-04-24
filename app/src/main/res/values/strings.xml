@@ -12,6 +12,7 @@
     //Detail Activity
     <string name="no_description">No Description</string>
     <string name="select_a_status">Select a Status</string>
+    <string name="ok">OK</string>
 
     //My Books Activity
     <string name="my_books">My Books</string>

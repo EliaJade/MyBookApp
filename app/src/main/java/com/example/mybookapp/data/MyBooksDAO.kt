@@ -41,7 +41,7 @@ class MyBooksDAO(context: Context) {
             put(MyBooks.COLUMN_BOOK_THUMBNAIL, myBooks.thumbnail)
         }
         try {
-            val updatedRows  = db.update(MyBooks.TABLE_NAME, values, "${MyBooks.COLUMN_BOOK_ID} = ${myBooks.id}", null)
+            val updatedRows  = db.update(MyBooks.TABLE_NAME, values, "${MyBooks.COLUMN_BOOK_ID} = '${myBooks.id}'", null)
             Log.i("DATABASE", "Updated book with id: $updatedRows")
         } catch (e: Exception) {
             e.printStackTrace()

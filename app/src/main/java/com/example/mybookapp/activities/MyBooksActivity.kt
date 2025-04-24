@@ -39,7 +39,7 @@ class MyBooksActivity : AppCompatActivity() {
             insets
         }
 
-        supportActionBar?.title = "My Books"
+        supportActionBar?.title = getString(R.string.my_books)
 
         myBooksDAO = MyBooksDAO(this)
 

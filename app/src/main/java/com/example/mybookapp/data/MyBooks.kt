@@ -1,5 +1,7 @@
 package com.example.mybookapp.data
 
+import com.example.mybookapp.R
+
 class MyBooks(
     var id: String,
     var status: Status,

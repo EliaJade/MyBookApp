@@ -1,5 +1,7 @@
 package com.example.mybookapp.data
 
+import com.example.mybookapp.R
+
 data class BookKind(
     val kind: String,
     val items: List<Book>
@@ -69,7 +71,7 @@ data class Book (
         val maturityRating: String, //possible boolean
         val allowAnonLogging: Boolean,
         val contentVersion: String,
-        val imageLinks: ImageLinks,
+        val imageLinks: ImageLinks?,
         val language: String,
         val previewLink: String,
         val infoLink: String,
