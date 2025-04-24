@@ -32,8 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var bookList: List<Book>
 
-    lateinit var myBooks: MyBooks
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -59,7 +57,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.recyclerView.layoutManager = GridLayoutManager(this, 1)
 
-        searchBookByName("flower")
+        searchBookByName("a")
+
 
     }
 
@@ -78,12 +77,12 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String): Boolean {
                 //Log.i("MENU", "I pressed Enter")
                 searchBookByName(query)
-                return false
+                return true
             }
 
             override fun onQueryTextChange(query: String): Boolean {
 
-                return true
+                return false
             }
         })
 
@@ -105,7 +104,8 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val service = BookService.getInstance()
-                val result = service.findBookByTitle(query)
+                val queryWithAuthor = "$query+inauthor:$query"
+                val result = service.findBookByTitle(queryWithAuthor)
                 bookList = result.items
 
                 Log.i("API", result.toString())
@@ -121,6 +121,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     fun navigateToDetail(book: Book) {
         val intent = Intent(this, DetailActivity::class.java)

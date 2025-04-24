@@ -15,8 +15,13 @@ interface BookService {
         @Query("key") apiKey: String = "AIzaSyDI__FYXuVm8rkkvoaGdKzJ_w72Gqc6nQs"
     ): BookKind
 
-    @GET("author")
-    suspend fun findBookByAuthor(@Query("q") query:String, @Query("key") apiKey: String = "AIzaSyDI__FYXuVm8rkkvoaGdKzJ_w72Gqc6nQs"): BookKind
+    /*@GET("volumes")
+    suspend fun findBookByAuthor(
+        @Query("inauthor") query:String,
+        @Query("startIndex") startIndex:Int = 0,
+        @Query("maxResults") maxResults:Int = 40,
+        @Query("key") apiKey: String = "AIzaSyDI__FYXuVm8rkkvoaGdKzJ_w72Gqc6nQs"
+    ): BookKind*/
 
     @GET("volumes/{volumeId}")
     suspend fun findBookById(@Path("volumeId") id:String): Book

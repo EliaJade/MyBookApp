@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 import com.example.mybookapp.utils.DatabaseManager
+import kotlin.coroutines.CoroutineContext
 
 class MyBooksDAO(context: Context) {
     val databaseManager = DatabaseManager(context)
@@ -126,6 +127,51 @@ class MyBooksDAO(context: Context) {
                 MyBooks.TABLE_NAME,       //THE TABLE TO QUERY
                 projection,             //THE ARRAY OF COLUMNS TO RETURN ( PASS NULL TO GET ALL)
                 null,          //THE COLUMNS FOR THE where CLAUSE
+                null,       //THE VALUES FOR THE where CLAUSE
+                null,           //DON'T GROUP THE ROWS
+                null,            // DON'T FILTER BY ROW GROUPS
+                null            // THE SORT ORDER
+            )
+
+
+            while (cursor.moveToNext()) {
+                val itemId = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_ID))
+                val status = cursor.getInt(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_STATUS))
+                val title = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_TITLE))
+                val author = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_AUTHOR))?.split("; ")
+                val thumbnail = cursor.getString(cursor.getColumnIndexOrThrow(MyBooks.COLUMN_BOOK_THUMBNAIL))
+
+
+                val book = MyBooks(itemId, Status.entries[status], title, author, thumbnail)
+                bookList.add(book)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            db.close()
+        }
+        return bookList
+    }
+
+    fun findByMyBookName(query: String): List<MyBooks> {
+        val db = databaseManager.readableDatabase
+        val projection = arrayOf(
+            MyBooks.COLUMN_BOOK_ID,
+            MyBooks.COLUMN_BOOK_STATUS,
+            MyBooks.COLUMN_BOOK_TITLE,
+            MyBooks.COLUMN_BOOK_AUTHOR,
+            MyBooks.COLUMN_BOOK_THUMBNAIL,
+        )
+
+
+        val bookList: MutableList<MyBooks> = mutableListOf()
+        var selection = "${MyBooks.COLUMN_BOOK_TITLE} LIKE '%$query%'"
+
+        try {
+            val cursor = db.query(
+                MyBooks.TABLE_NAME,       //THE TABLE TO QUERY
+                projection,             //THE ARRAY OF COLUMNS TO RETURN ( PASS NULL TO GET ALL)
+                selection,          //THE COLUMNS FOR THE where CLAUSE
                 null,       //THE VALUES FOR THE where CLAUSE
                 null,           //DON'T GROUP THE ROWS
                 null,            // DON'T FILTER BY ROW GROUPS

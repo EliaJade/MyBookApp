@@ -2,21 +2,29 @@ package com.example.mybookapp.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mybookapp.R
 import com.example.mybookapp.adapters.BookAdapter
 import com.example.mybookapp.adapters.MyBooksAdapter
 import com.example.mybookapp.data.Book
+import com.example.mybookapp.data.BookService
 import com.example.mybookapp.data.MyBooks
 import com.example.mybookapp.data.MyBooksDAO
 import com.example.mybookapp.data.Status
 import com.example.mybookapp.databinding.ActivityMyBooksBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MyBooksActivity : AppCompatActivity() {
 
@@ -24,7 +32,10 @@ class MyBooksActivity : AppCompatActivity() {
     lateinit var myBooksDAO: MyBooksDAO
     var myBooksList: List<MyBooks> = emptyList()
 
+    var filterQuery = ""
+
     lateinit var adapter: MyBooksAdapter
+    lateinit var bookList: List<Book>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +62,9 @@ class MyBooksActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.recyclerView.layoutManager = GridLayoutManager(this, 3)
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -66,13 +79,40 @@ class MyBooksActivity : AppCompatActivity() {
             android.R.id.home -> {
                 finish()
                 true
+
             }
             else -> super.onOptionsItemSelected(item)
         }
 
     }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_activity_search_my_books, menu)
 
-    fun navigateToDetail(book: MyBooks) {
+        val menuItem = menu?.findItem(R.id.action_search_my_books)
+        val searchView = menuItem?.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+
+                return false
+            }
+
+            override fun onQueryTextChange(query: String): Boolean {
+                filterQuery = query
+                refreshData()
+                return true
+            }
+        })
+
+        return true
+    }
+
+    fun refreshData() {
+        myBooksList = myBooksDAO.findByMyBookName(filterQuery)
+        adapter.updateItems(myBooksList)
+    }
+
+                fun navigateToDetail(book: MyBooks) {
         val intent = Intent(this, DetailActivity::class.java)
         intent.putExtra(DetailActivity.EXTRA_BOOK_ID, book.id)
         startActivity(intent)
