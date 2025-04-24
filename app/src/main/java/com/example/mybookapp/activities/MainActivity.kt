@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.recyclerView.layoutManager = GridLayoutManager(this, 1)
 
-        searchBookByName("a")
+        searchBookByName("mistborn")
 
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -90,6 +90,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     fun searchBookByName(query: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -105,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
             } catch (e: Exception) {
-                Log.i("error en el coroutine", "Error ${e.message}")
+                Log.i("error in the coroutine", "Error ${e.message}")
                 e.printStackTrace()
             }
         }

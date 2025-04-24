@@ -9,8 +9,8 @@
             app:actionViewClass="androidx.appcompat.widget.SearchView"/>
 
         <item android:id="@+id/action_save"
-            android:icon="@drawable/ic_save"
-            android:title="@string/menu_search"
+            android:icon="@drawable/ic_bookmarks"
+            android:title="@string/menu_saved_books"
             app:showAsAction="always"/>
 
 </menu>
