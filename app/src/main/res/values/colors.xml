@@ -2,4 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+
+    <color name="read">#82C2F4</color>
+    <color name="reading">#F4EA9B</color>
+    <color name="want_to_read">#F29CB9</color>
 </resources>
