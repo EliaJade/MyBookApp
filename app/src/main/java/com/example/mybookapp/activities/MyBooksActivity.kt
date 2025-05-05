@@ -22,6 +22,8 @@ import com.example.mybookapp.data.MyBooks
 import com.example.mybookapp.data.MyBooksDAO
 import com.example.mybookapp.data.Status
 import com.example.mybookapp.databinding.ActivityMyBooksBinding
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,13 +31,15 @@ import kotlinx.coroutines.launch
 class MyBooksActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMyBooksBinding
+
+    var filterCategory: Status? = null
+
     lateinit var myBooksDAO: MyBooksDAO
     var myBooksList: List<MyBooks> = emptyList()
 
     var filterQuery = ""
 
     lateinit var adapter: MyBooksAdapter
-    lateinit var bookList: List<Book>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,11 +67,31 @@ class MyBooksActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.recyclerView.layoutManager = GridLayoutManager(this, 3)
+
+
+        binding.tabBar.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                when(tab.position) {
+                    0 -> filterCategory = null
+                    1-> filterCategory = Status.WANT_TO_READ
+                    2 -> filterCategory = Status.READING
+                    3 -> filterCategory = Status.READ
+                }
+                refreshData()
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+
+        })
     }
+
 
 
     override fun onResume() {
         super.onResume()
+        refreshData()
 
         myBooksList = myBooksDAO.findAll()
         adapter.items = myBooksList
@@ -108,7 +132,9 @@ class MyBooksActivity : AppCompatActivity() {
     }
 
     fun refreshData() {
-        myBooksList = myBooksDAO.findByMyBookName(filterQuery)
+        myBooksList = myBooksDAO.findByMyBookName(filterQuery,
+            //filterCategory
+            )
         adapter.updateItems(myBooksList)
     }
 

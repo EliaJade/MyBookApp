@@ -95,9 +95,10 @@ class DetailActivity : AppCompatActivity(){
             binding.authorTextView.text = getString(R.string.anonymous)
         }*/
 
-        loadStatus()
+
         supportActionBar?.title = book.volumeInfo.title
         supportActionBar?.subtitle = book.volumeInfo.getAuthorsText()
+        loadStatus()
     }
 
 
@@ -150,13 +151,14 @@ class DetailActivity : AppCompatActivity(){
     private fun loadStatus() {
         if (myBooks != null) {
             val iconId = when(myBooks!!.status) {
-                Status.READ -> R.drawable.ic_status_read
-                Status.READING -> R.drawable.ic_status_reading
-                Status.WANT_TO_READ -> R.drawable.ic_status_want_to_read
+                Status.READ -> Status.READ.icon
+                Status.READING -> Status.READING.icon
+                Status.WANT_TO_READ -> Status.WANT_TO_READ.icon
             }
             binding.statusChip.setChipIconResource(iconId)
             binding.statusChip.text = getString(myBooks!!.status.title)
             binding.statusChip.visibility = View.VISIBLE
+
         } else {
             binding.statusChip.visibility = View.GONE
         }
@@ -210,5 +212,10 @@ class DetailActivity : AppCompatActivity(){
             loadStatus()
         }
         alert.show()
+        loadStatus()
+        loadData()
     }
 }
+
+val statusNumber = 0
+val status = Status.entries[statusNumber]
