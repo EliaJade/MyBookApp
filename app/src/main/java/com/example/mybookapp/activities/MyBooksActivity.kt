@@ -133,7 +133,7 @@ class MyBooksActivity : AppCompatActivity() {
 
     fun refreshData() {
         myBooksList = myBooksDAO.findByMyBookName(filterQuery,
-            //filterCategory
+            filterCategory
             )
         adapter.updateItems(myBooksList)
     }

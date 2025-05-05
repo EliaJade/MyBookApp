@@ -153,7 +153,7 @@ class MyBooksDAO(context: Context) {
         return bookList
     }
 
-    fun findByMyBookName(query: String): List<MyBooks> {
+    fun findByMyBookName(query: String, status: Status?): List<MyBooks> {
         val db = databaseManager.readableDatabase
         val projection = arrayOf(
             MyBooks.COLUMN_BOOK_ID,
@@ -165,7 +165,13 @@ class MyBooksDAO(context: Context) {
 
 
         val bookList: MutableList<MyBooks> = mutableListOf()
-        var selection = "${MyBooks.COLUMN_BOOK_TITLE} LIKE '%$query%'"
+
+        var selection = if (status != null) {
+            "${MyBooks.COLUMN_BOOK_STATUS} = ${status.ordinal} AND "
+        } else {
+            ""
+        }
+        selection += "${MyBooks.COLUMN_BOOK_TITLE} LIKE '%$query%'"
 
         try {
             val cursor = db.query(
