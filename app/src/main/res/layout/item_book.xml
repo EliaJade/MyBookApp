@@ -28,6 +28,13 @@
             android:src="@mipmap/ic_launcher"
             android:scaleType="centerCrop"/>
 
+        <ImageView
+            android:id="@+id/imageErrorImageView"
+            android:layout_width="120dp"
+            android:layout_height="170dp"
+            android:src="@drawable/ic_reading"
+            android:visibility="gone"/>
+
         <com.google.android.material.chip.Chip
             android:id="@+id/statusChip"
             android:layout_width="wrap_content"
@@ -58,6 +65,15 @@
             tools:text= "Name of Book"
             android:textSize="18sp"
             android:textStyle="bold"
+        android:ellipsize="end"
+        android:maxLines="2" />
+
+    <TextView
+            android:id="@+id/subtitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text= "Subtitle of Book"
+            android:textSize="18sp"
         android:ellipsize="end"
         android:maxLines="2" />
 

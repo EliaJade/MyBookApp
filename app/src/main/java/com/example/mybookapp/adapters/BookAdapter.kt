@@ -41,13 +41,26 @@ class BookViewHolder (val binding: ItemBookBinding) : ViewHolder(binding.root){
 
     fun render(book: Book) {
         binding.titleTextView.text = book.volumeInfo.title
+        binding.subtitleTextView.text = book.volumeInfo.subtitle
+        if (book.volumeInfo.subtitle != null) {
+            binding.subtitleTextView.visibility = View.VISIBLE
+        } else {
+            binding.subtitleTextView.visibility = View.GONE
+        }
+
         binding.authorTextView.text = book.volumeInfo.getAuthorsText()
         if (book.volumeInfo.imageLinks != null) {
             Picasso.get()
-                .load(book.volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://"))
+                .load(book.volumeInfo.imageLinks.thumbnail?.replace("http://", "https://"))
                 .into(binding.pictureImageView)
         } else {
-            binding.pictureImageView.setImageResource(R.drawable.ic_launcher_background)
+            binding.pictureImageView.visibility = View.GONE
+            binding.imageErrorImageView.visibility = View.VISIBLE
+            /*binding.subtitleTextView.visibility = View.GONE
+            binding.titleTextView.visibility = View.GONE
+            binding.authorTextView.visibility = View.GONE
+            binding.pictureImageView.visibility = View.GONE
+            binding.shortDescriptionTextView.visibility = View.GONE*/
         }
         loadStatus(book.id)
     }
