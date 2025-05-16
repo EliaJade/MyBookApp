@@ -42,7 +42,8 @@ class MyBooksAdapter(var items: List<MyBooks>, val onClick: (Int) -> Unit) : Ada
 class MyBookViewHolder (val binding: ItemBookBinding) : ViewHolder(binding.root){
 
     fun render(book: MyBooks) {
-        Picasso.get().load(book.thumbnail?.replace("http://", "https://")).into(binding.pictureImageView)
+        val imageurl = book.thumbnail?.replace("http://", "https://")
+        Picasso.get().load(imageurl).into(binding.pictureImageView)
         loadStatus(book.id)
     }
 
