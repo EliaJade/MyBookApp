@@ -25,14 +25,13 @@
             android:id="@+id/pictureImageView"
             android:layout_width="120dp"
             android:layout_height="170dp"
-            android:src="@mipmap/ic_launcher"
-            android:scaleType="centerCrop"/>
+            android:src="@drawable/open_book"/>
 
         <ImageView
             android:id="@+id/imageErrorImageView"
             android:layout_width="120dp"
             android:layout_height="170dp"
-            android:src="@drawable/ic_reading"
+            android:src="@drawable/open_book"
             android:visibility="gone"/>
 
         <com.google.android.material.chip.Chip

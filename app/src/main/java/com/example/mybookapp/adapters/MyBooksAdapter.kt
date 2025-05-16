@@ -43,7 +43,12 @@ class MyBookViewHolder (val binding: ItemBookBinding) : ViewHolder(binding.root)
 
     fun render(book: MyBooks) {
         val imageurl = book.thumbnail?.replace("http://", "https://")
+
+        if (book.thumbnail != null) {
         Picasso.get().load(imageurl).into(binding.pictureImageView)
+        } else {
+            binding.pictureImageView
+        }
         loadStatus(book.id)
     }
 

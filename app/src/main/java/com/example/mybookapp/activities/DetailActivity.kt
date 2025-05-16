@@ -81,7 +81,7 @@ class DetailActivity : AppCompatActivity(){
                 .load(book.volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://"))
                 .into(binding.coverImageView)
         } else {
-            binding.coverImageView.setImageResource(R.drawable.ic_launcher_background)
+            binding.coverImageView
         }
         if(book.volumeInfo.description != null) {
             binding.bookDescriptionTextView.text = HtmlCompat.fromHtml(book.volumeInfo.description!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
