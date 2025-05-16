@@ -54,7 +54,8 @@ class BookViewHolder (val binding: ItemBookBinding) : ViewHolder(binding.root){
                 .load(book.volumeInfo.imageLinks.thumbnail?.replace("http://", "https://"))
                 .into(binding.pictureImageView)
         } else {
-            binding.pictureImageView
+            binding.pictureImageView.visibility = View.GONE
+            binding.imageErrorImageView.visibility = View.VISIBLE
             /*binding.subtitleTextView.visibility = View.GONE
             binding.titleTextView.visibility = View.GONE
             binding.authorTextView.visibility = View.GONE
