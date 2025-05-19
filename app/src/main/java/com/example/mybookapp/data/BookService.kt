@@ -1,15 +1,20 @@
 package com.example.mybookapp.data
 
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.util.Locale
+
 
 interface BookService {
     @GET("volumes")
     suspend fun findBookByTitle(
         @Query("q") query:String,
+        @Query("langRestrict") langRestrict:String = Locale.getDefault().toLanguageTag().split("-")[0],
         @Query("startIndex") startIndex:Int = 0,
         @Query("maxResults") maxResults:Int = 40,
         @Query("key") apiKey: String = "AIzaSyDI__FYXuVm8rkkvoaGdKzJ_w72Gqc6nQs"
@@ -28,8 +33,13 @@ interface BookService {
 
     companion object {
         fun getInstance(): BookService {
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+            val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
             val retrofit = Retrofit.Builder()
                 .baseUrl("https://www.googleapis.com/books/v1/")
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 

@@ -103,7 +103,8 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val service = BookService.getInstance()
-                val queryWithAuthor = "$query+inauthor:$query"
+                val queryWithAuthor = "$query"
+                //val queryWithAuthor = "$query+inauthor:$query"
                 val result = service.findBookByTitle(queryWithAuthor)
                 bookList = result.items
 
@@ -112,6 +113,7 @@ class MainActivity : AppCompatActivity() {
                 CoroutineScope(Dispatchers.Main).launch {
                     adapter.items = bookList
                     adapter.notifyDataSetChanged()
+                    binding.recyclerView.scrollToPosition(0)
                 }
 
             } catch (e: Exception) {
@@ -120,6 +122,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
 
 
     fun navigateToDetail(book: Book) {
